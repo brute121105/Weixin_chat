@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@android:style/Theme.Black.NoTitleBar"
+    tools:context="hyj.weinxin_chat.MainActivity">
+
+    <TextView
+        android:id="@+id/spinnerText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="sdddddsd"
+        android:textSize="20sp"
+        android:textColor="#000000" />
+    <Spinner android:id="@+id/Spinner01"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:text="发送间隔时间（秒）"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <EditText
+        android:id="@+id/interval_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/open_assist"
+        android:text="打开辅助权限"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/login_set"
+        android:text="账号配置"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
