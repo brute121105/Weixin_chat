@@ -1,6 +1,9 @@
 package hyj.weinxin_chat;
 
 import android.accessibilityservice.AccessibilityService;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -149,6 +152,11 @@ public class AutoUtil {
         Bundle inputContent = new Bundle();
         inputContent.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,inputText);
         return inputContent;
+    }
+    public static void createPaste(String text){
+        ClipboardManager clipboard = (ClipboardManager) GlobalApplication.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("text", text);
+        clipboard.setPrimaryClip(clip);
     }
     //返回执行状态并打印日志
     public static void recordAndLog(Map<String,String> record, String recordAction){

@@ -8,6 +8,8 @@ public class Constants {
     public static final String CHAT_LISTENING="初始化监听";
 
     public static final String LOGINI_LISTENING="初始化监听";
+    public static final String LOGIN_ACTION_BEGIN="开始登陆";
+    public static final String LOGIN_ACTION_00="LOGIN_退出";
     public static final String LOGIN_ACTION_01="LOGIN_退出当前账号";
     public static final String LOGIN_ACTION_02="LOGIN_确认退出";
     public static final String LOGIN_ACTION_03="LOGIN_更多";
