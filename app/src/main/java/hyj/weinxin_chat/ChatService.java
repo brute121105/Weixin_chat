@@ -27,7 +27,6 @@ import static hyj.weinxin_chat.GlobalApplication.getContext;
 
 public class ChatService extends AccessibilityService {
     public ChatService() {
-        System.out.println("eventType-->null");
         AutoUtil.recordAndLog(record,Constants.CHAT_LISTENING);
         AutoUtil.recordAndLog(loginRecord,Constants.LOGINI_LISTENING);
     }
@@ -40,11 +39,12 @@ public class ChatService extends AccessibilityService {
         if(root!=null){
             autoLogin(root);
         }else {
-            System.out.println("---->auto login root is null");
+            LogUtil.d("autoLogin","auto login root is null");
         }
     }
     static int qNum;
     static int intervalTime;
+    static int intevalLoginTime;
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
@@ -53,9 +53,11 @@ public class ChatService extends AccessibilityService {
         accounts = getAccount();
         String strQnum = sharedPreferences.getString("qNum","");
         String strIntervalTime = sharedPreferences.getString("intervalTime","");
+        String strIntevalLoginTime = sharedPreferences.getString("intevalLoginTime","");
         qNum = Integer.parseInt("".equals(strQnum)?"0":strQnum);
         intervalTime = Integer.parseInt("".equals(strIntervalTime)?"0":strIntervalTime);
-        System.out.println("qnum--->"+qNum);
+        intevalLoginTime = Integer.parseInt("".equals(strIntevalLoginTime)?"0":strIntevalLoginTime);
+        LogUtil.d("chatService","发送个数:"+qNum+" 发送间隔:"+strIntervalTime+" 自动登录间隔:"+intevalLoginTime+" 配置账号个数:"+accounts.size());
         ScheduledThreadPoolExecutor stpe = new ScheduledThreadPoolExecutor(5);
         stpe.scheduleWithFixedDelay(new AutoChatThread(),3,intervalTime, TimeUnit.SECONDS);
     }
@@ -67,28 +69,39 @@ public class ChatService extends AccessibilityService {
     class AutoChatThread implements Runnable{
         @Override
         public void run() {
+            if(WeixinAutoHandler.IS_PAUSE){
+                LogUtil.d("autoChat","暂停服务");
+                return;
+            }
             SimpleDateFormat sdf = new SimpleDateFormat("mm");
             int minute = Integer.parseInt(sdf.format(new Date()));
-            System.out.println("minute---->"+minute);
-            if(isLogin) return;
-            if(minute%10==0&&(minute-lastLoginMinute)>1){
+            LogUtil.d("autoChat","线程"+Thread.currentThread().getName()+" minute:"+minute+" lastLoginMinute:"+lastLoginMinute);
+            if(isLogin){
+                LogUtil.d("autoChat","等待自动登录完成...");
+                return;
+            }
+            if(accounts.size()>0&&minute%intevalLoginTime==0&&(minute-lastLoginMinute)>1){
                 synchronized (this){
-                    System.out.println("------jin lai l ----");
+                    LogUtil.d("autoLogin","满足自动登录");;
                     AccessibilityNodeInfo loginRoot = getRootInActiveWindow();
-                    if(loginRoot==null) return;
+                    if(loginRoot==null){
+                        LogUtil.d("autoLogin","loginRoot is null");
+                        return;
+                    }
                     AccessibilityNodeInfo exitCurrentAcountBtn = AutoUtil.findNodeInfosByText(loginRoot,"我");
-                    System.out.println("exitCurrentAcountBtn--->"+exitCurrentAcountBtn);
-                    AutoUtil.performClick(exitCurrentAcountBtn,loginRecord,"我",500);
-
+                    AutoUtil.performClick(exitCurrentAcountBtn,loginRecord,"点击[我]菜单",500);
+                    if(exitCurrentAcountBtn==null){
+                        LogUtil.d("autoLogin","获取菜单[我] is null");
+                        return;
+                    }
+                    LogUtil.d("autoLogin","开始自动登录");
                     AccessibilityNodeInfo exitCurrentAcountBtn1 = AutoUtil.findNodeInfosByText(loginRoot,"设置");
-                    AutoUtil.performClick(exitCurrentAcountBtn1,loginRecord,Constants.LOGIN_ACTION_BEGIN);
+                    AutoUtil.performClick(exitCurrentAcountBtn1,loginRecord,Constants.LOGINI_LISTENING);
                     lastLoginMinute = minute;
                 }
             }
-            System.out.println("is_pause--->"+WeixinAutoHandler.IS_PAUSE);
-            if(WeixinAutoHandler.IS_PAUSE) return;
+
             //while (true){
-                System.out.println("---开启线程--"+Thread.currentThread().getName());
                 AccessibilityNodeInfo root = getRootInActiveWindow();
                 if(root!=null){
                     if(nickNames.isEmpty()){
@@ -105,21 +118,32 @@ public class ChatService extends AccessibilityService {
                                 System.out.println("nick-->" + nickText);
                             }
                             if (nickNames.get(nickNameIndes).equals(nickText)) {
-                                System.out.println("---进入 so----");
-                                AutoUtil.performClick(nickNode, record, "点击昵称", 1000);
+                                AutoUtil.performClick(nickNode, record, "点击昵称:"+nickText, 1000);
 
                                 //6、填充第3步已获取消息到输入框
-                                AccessibilityNodeInfo editText = AutoUtil.findNodeInfosById(getRootInActiveWindow(),"com.tencent.mm:id/a49");
+                                findEditAndSetText(0);
+                                if(!AutoUtil.checkAction(record,Constants.CHAT_ACTION_05)){
+                                    AccessibilityNodeInfo keyBtn = AutoUtil.findNodeInfosById(getRootInActiveWindow(),"com.tencent.mm:id/a47");
+                                    if(keyBtn!=null) {
+                                        LogUtil.d("autoChat","键盘按钮已获取");
+                                        AutoUtil.performClick(keyBtn, record, "点击键盘按钮",500);
+                                        findEditAndSetText(1);
+                                    }else{
+                                        LogUtil.d("autoChat","键盘按钮 is null");
+                                    }
+                                }
+                               /* AccessibilityNodeInfo editText = AutoUtil.findNodeInfosById(getRootInActiveWindow(),"com.tencent.mm:id/a49");
                                 if(editText!=null){
                                     editText.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,AutoUtil.createBuddleText("测试内容"+System.currentTimeMillis()+" "+countSendNum));
                                     AutoUtil.recordAndLog(record,Constants.CHAT_ACTION_05);
-                                }
+                                }*/
                                 //7、发送
                                 if(Constants.CHAT_ACTION_05.equals(record.get("recordAction"))){
                                     root = getRootInActiveWindow();
                                     AccessibilityNodeInfo sendBtn = AutoUtil.findNodeInfosByText(root,"发送");
                                     AutoUtil.performClick(sendBtn,record,Constants.CHAT_ACTION_06,1000);
-                                    AutoUtil.performBack(ChatService.this,record,"全局返回");
+                                    back2List(root);
+                                    //AutoUtil.performBack(ChatService.this,record,"全局返回");
                                     AutoUtil.recordAndLog(record,Constants.CHAT_LISTENING);
                                 }
                                 if(nickNameIndes==nickNames.size()-1||nickNameIndes==qNum-1){
@@ -135,6 +159,22 @@ public class ChatService extends AccessibilityService {
                 }
             //}
         }
+    }
+    private void findEditAndSetText(int tryCount){
+        if(tryCount==10) return;
+        AccessibilityNodeInfo editText = AutoUtil.findNodeInfosById(getRootInActiveWindow(),"com.tencent.mm:id/a49");
+        if(editText!=null){
+            editText.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,AutoUtil.createBuddleText("测试内容"+System.currentTimeMillis()+" "+countSendNum));
+            AutoUtil.recordAndLog(record,Constants.CHAT_ACTION_05);
+        }else if(tryCount!=0) {
+            LogUtil.d("autoChat","输入框 is null "+tryCount);
+            AutoUtil.sleep(500);
+            findEditAndSetText(tryCount+1);
+        }
+    }
+    private void back2List(AccessibilityNodeInfo root){
+        AccessibilityNodeInfo backBtn = AutoUtil.findNodeInfosById(root,"com.tencent.mm:id/go");
+        AutoUtil.performClick(backBtn,record,"全局返回");
     }
     private void getNickNamesList(AccessibilityNodeInfo root){
         if(root!=null) {
@@ -167,9 +207,11 @@ public class ChatService extends AccessibilityService {
     static  List<String[]> accounts;
     private void autoLogin(AccessibilityNodeInfo nodeInfo){
         //0、退出
-        if(AutoUtil.checkAction(loginRecord,Constants.LOGIN_ACTION_BEGIN)){
-            isLogin=true;
+        if(AutoUtil.checkAction(loginRecord,Constants.LOGINI_LISTENING)){
             AccessibilityNodeInfo exitCurrentAcountBtn = AutoUtil.findNodeInfosByText(nodeInfo,"退出");
+            if(exitCurrentAcountBtn!=null){
+                isLogin=true;
+            }
             AutoUtil.performClick(exitCurrentAcountBtn,loginRecord,Constants.LOGIN_ACTION_00);
             return;
         }

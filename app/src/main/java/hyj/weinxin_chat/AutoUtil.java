@@ -13,6 +13,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import hyj.weinxin_chat.util.LogUtil;
+
 /**
  * Created by asus on 2017/5/13.
  */
@@ -161,8 +163,7 @@ public class AutoUtil {
     //返回执行状态并打印日志
     public static void recordAndLog(Map<String,String> record, String recordAction){
         record.put("recordAction",recordAction);
-        System.out.println("record--->"+recordAction);
-
+        LogUtil.d("record",recordAction);
     }
     //核对状态
     public static boolean checkAction(Map<String,String> record, String recordAction){

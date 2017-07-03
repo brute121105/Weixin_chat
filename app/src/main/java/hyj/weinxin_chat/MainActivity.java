@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String[] m={"1","2","3","4","5","6","7","8","9","10"};
     private TextView view ;
     private EditText intevalTime;
+    private EditText intevalLoginTime;
     private Spinner spinner;
     private ArrayAdapter<String> adapter;
 
@@ -58,6 +59,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button killSelfBtn = (Button)this.findViewById(R.id.killSelf);
+        killSelfBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
+        });
+
         view = (TextView) findViewById(R.id.spinnerText);
 
         spinner = (Spinner) findViewById(R.id.Spinner01);
@@ -85,6 +94,13 @@ public class MainActivity extends AppCompatActivity {
         }
         intevalTime.setText(defaultintevalTime);
 
+        intevalLoginTime = (EditText)findViewById(R.id.interval_login_time);
+        String defaulIntevalLoginTime = sharedPreferences.getString("intevalLoginTime","");
+        if(defaulIntevalLoginTime==null||defaulIntevalLoginTime.equals("")){
+            defaulIntevalLoginTime = "3";
+        }
+        intevalLoginTime.setText(defaulIntevalLoginTime);
+
     }
     private View.OnClickListener tbnListen = new View.OnClickListener() {
         @Override
@@ -99,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
     private void saveParams(){
         SharedPreferences.Editor editor= sharedPreferences.edit();
         editor.putString("intervalTime",intevalTime.getText()+"");
+        editor.putString("intevalLoginTime",intevalLoginTime.getText()+"");
         editor.commit();
     }
 
