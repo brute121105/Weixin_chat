@@ -7,7 +7,9 @@ import android.content.Context;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static hyj.weinxin_chat.GlobalApplication.getContext;
 import static org.junit.Assert.*;
@@ -20,10 +22,22 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("mm");
-        String dateTime = sdf.format(new Date());
-        int a = Integer.parseInt("01");
-        System.out.println(a);
-        System.out.println(dateTime);
+        getMsgs("#11#22");
+    }
+
+    private List<String> getMsgs(String str){
+        List<String> strList = new ArrayList<String>();
+        if(str==null||"".equals(str.trim())){
+            return strList;
+        }
+        str = str.replaceAll("\n","");
+        String[] strs = str.split("#");
+        for(String s :strs){
+            if(!"".equals(s)){
+                System.out.println(s);
+                strList.add(s);
+            }
+        }
+        return strList;
     }
 }

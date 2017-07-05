@@ -46,6 +46,7 @@ public class ChatService extends AccessibilityService {
     static int intervalTime;
     static int intevalLoginTime;
     static String sendMsg;
+    static List<String> sendMsgList;
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
@@ -56,6 +57,7 @@ public class ChatService extends AccessibilityService {
         String strIntervalTime = sharedPreferences.getString("intervalTime","");
         String strIntevalLoginTime = sharedPreferences.getString("intevalLoginTime","");
         sendMsg = sharedPreferences.getString("sendMsg","");
+        sendMsgList = getMsgs(sendMsg);
         if("".equals(sendMsg)){
             sendMsg = "系统自动发送";
         }
@@ -81,30 +83,6 @@ public class ChatService extends AccessibilityService {
             SimpleDateFormat sdf = new SimpleDateFormat("mm");
             int minute = Integer.parseInt(sdf.format(new Date()));
             LogUtil.d("autoChat","线程"+Thread.currentThread().getName()+" minute:"+minute+" lastLoginMinute:"+lastLoginMinute);
-           /* if(isLogin){
-                LogUtil.d("autoChat","等待自动登录完成...");
-                return;
-            }
-            if(accounts.size()>0&&minute%intevalLoginTime==0&&(minute-lastLoginMinute)>1){
-                synchronized (this){
-                    LogUtil.d("autoLogin","满足自动登录");;
-                    AccessibilityNodeInfo loginRoot = getRootInActiveWindow();
-                    if(loginRoot==null){
-                        LogUtil.d("autoLogin","loginRoot is null");
-                        return;
-                    }
-                    AccessibilityNodeInfo exitCurrentAcountBtn = AutoUtil.findNodeInfosByText(loginRoot,"我");
-                    AutoUtil.performClick(exitCurrentAcountBtn,loginRecord,"点击[我]菜单",500);
-                    if(exitCurrentAcountBtn==null){
-                        LogUtil.d("autoLogin","获取菜单[我] is null");
-                        return;
-                    }
-                    LogUtil.d("autoLogin","开始自动登录");
-                    AccessibilityNodeInfo exitCurrentAcountBtn1 = AutoUtil.findNodeInfosByText(loginRoot,"设置");
-                    AutoUtil.performClick(exitCurrentAcountBtn1,loginRecord,Constants.LOGINI_LISTENING);
-                    lastLoginMinute = minute;
-                }
-            }*/
 
             //while (true){
                 AccessibilityNodeInfo root = getRootInActiveWindow();
@@ -162,14 +140,22 @@ public class ChatService extends AccessibilityService {
             //}
         }
     }
+    static int msgIndex=0;
     private void findEditAndSetText(int tryCount){
         if(tryCount==10) return;
         AccessibilityNodeInfo editText = AutoUtil.findNodeInfosById(getRootInActiveWindow(),"com.tencent.mm:id/a49");
         if(editText!=null){
-            String msg = "测试内容"+System.currentTimeMillis()+" 1";
-            editText.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,AutoUtil.createBuddleText(sendMsg));
-            //editText.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,AutoUtil.createBuddleText("测试内容"+System.currentTimeMillis()+" 1"));
+            String msg = "系统自动发送"+System.currentTimeMillis()+" "+msgIndex;
+            if(sendMsgList.size()>0){
+                msg = sendMsgList.get(msgIndex);
+            }
+            editText.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,AutoUtil.createBuddleText(msg));
             AutoUtil.recordAndLog(record,Constants.CHAT_ACTION_05);
+            if(msgIndex==sendMsgList.size()-1){
+                msgIndex =0;
+            }else {
+                msgIndex = msgIndex+1;
+            }
         }else if(tryCount!=0) {
             LogUtil.d("autoChat","输入框 is null "+tryCount);
             AutoUtil.sleep(500);
@@ -281,13 +267,19 @@ public class ChatService extends AccessibilityService {
             }
         }
     }
-    private void getMsgs(String str){
-        if(str==null||"".equals(str.trim())){
-            return;
-        }
-        String[] strs = str.split("##");
+    private List<String> getMsgs(String str){
         List<String> strList = new ArrayList<String>();
-        ofrd
+        if(str==null||"".equals(str.trim())){
+            return strList;
+        }
+        str = str.replaceAll("\n","");
+        String[] strs = str.split("#");
+        for(String s :strs){
+            if(!"".equals(s.trim())){
+                strList.add(s);
+            }
+        }
+        return strList;
     }
 
     public List<String[]> getAccount(){
