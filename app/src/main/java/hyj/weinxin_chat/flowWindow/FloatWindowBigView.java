@@ -40,7 +40,7 @@ public class FloatWindowBigView extends LinearLayout {
         viewWidth = view.getLayoutParams().width;
         viewHeight = view.getLayoutParams().height;
         Button back = (Button) findViewById(R.id.back);
-        Button openAssist = (Button)findViewById(R.id.open_assist);
+        //Button openAssist = (Button)findViewById(R.id.open_assist);
         Button openWx = (Button)findViewById(R.id.open_wx);
         Button openSetting = (Button)findViewById(R.id.open_setting);
         statusText = (TextView)findViewById(R.id.status_text);
@@ -91,7 +91,7 @@ public class FloatWindowBigView extends LinearLayout {
                 MyWindowManager.createSmallWindow(context);
             }
         });
-        openAssist.setOnClickListener(new OnClickListener() {
+      /*  openAssist.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
@@ -100,7 +100,7 @@ public class FloatWindowBigView extends LinearLayout {
                 MyWindowManager.removeBigWindow(context);
                 MyWindowManager.createSmallWindow(context);
             }
-        });
+        });*/
         openWx.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

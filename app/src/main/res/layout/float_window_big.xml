@@ -16,15 +16,15 @@
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold" />
-   <!-- <Button
+     <!--  <Button
         android:id="@+id/close"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dip"
         android:text="关闭悬浮窗"
-        />-->
-
+        />
+-->
 
     <Button
         android:id="@+id/pause"
@@ -34,13 +34,8 @@
         android:text="暂停"
         />
     <Button
-        android:id="@+id/open_assist"
-        android:text="打开辅助权限"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
         android:id="@+id/open_setting"
-        android:text="打开参数设置面板"
+        android:text="打开主面板"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button

@@ -45,6 +45,7 @@ public class ChatService extends AccessibilityService {
     static int qNum;
     static int intervalTime;
     static int intevalLoginTime;
+    static String sendMsg;
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
@@ -54,6 +55,10 @@ public class ChatService extends AccessibilityService {
         String strQnum = sharedPreferences.getString("qNum","");
         String strIntervalTime = sharedPreferences.getString("intervalTime","");
         String strIntevalLoginTime = sharedPreferences.getString("intevalLoginTime","");
+        sendMsg = sharedPreferences.getString("sendMsg","");
+        if("".equals(sendMsg)){
+            sendMsg = "系统自动发送";
+        }
         qNum = Integer.parseInt("".equals(strQnum)?"0":strQnum);
         intervalTime = Integer.parseInt("".equals(strIntervalTime)?"0":strIntervalTime);
         intevalLoginTime = Integer.parseInt("".equals(strIntevalLoginTime)?"0":strIntevalLoginTime);
@@ -76,7 +81,7 @@ public class ChatService extends AccessibilityService {
             SimpleDateFormat sdf = new SimpleDateFormat("mm");
             int minute = Integer.parseInt(sdf.format(new Date()));
             LogUtil.d("autoChat","线程"+Thread.currentThread().getName()+" minute:"+minute+" lastLoginMinute:"+lastLoginMinute);
-            if(isLogin){
+           /* if(isLogin){
                 LogUtil.d("autoChat","等待自动登录完成...");
                 return;
             }
@@ -99,7 +104,7 @@ public class ChatService extends AccessibilityService {
                     AutoUtil.performClick(exitCurrentAcountBtn1,loginRecord,Constants.LOGINI_LISTENING);
                     lastLoginMinute = minute;
                 }
-            }
+            }*/
 
             //while (true){
                 AccessibilityNodeInfo root = getRootInActiveWindow();
@@ -132,16 +137,13 @@ public class ChatService extends AccessibilityService {
                                         LogUtil.d("autoChat","键盘按钮 is null");
                                     }
                                 }
-                               /* AccessibilityNodeInfo editText = AutoUtil.findNodeInfosById(getRootInActiveWindow(),"com.tencent.mm:id/a49");
-                                if(editText!=null){
-                                    editText.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,AutoUtil.createBuddleText("测试内容"+System.currentTimeMillis()+" "+countSendNum));
-                                    AutoUtil.recordAndLog(record,Constants.CHAT_ACTION_05);
-                                }*/
+
                                 //7、发送
                                 if(Constants.CHAT_ACTION_05.equals(record.get("recordAction"))){
                                     root = getRootInActiveWindow();
-                                    AccessibilityNodeInfo sendBtn = AutoUtil.findNodeInfosByText(root,"发送");
-                                    AutoUtil.performClick(sendBtn,record,Constants.CHAT_ACTION_06,1000);
+                                    //AccessibilityNodeInfo sendBtn = AutoUtil.findNodeInfosByText(root,"发送");
+                                    AccessibilityNodeInfo sendBtn = AutoUtil.findNodeInfosById(root,"com.tencent.mm:id/a4e");
+                                    AutoUtil.performClick(sendBtn,record,Constants.CHAT_ACTION_06,500);
                                     back2List(root);
                                     //AutoUtil.performBack(ChatService.this,record,"全局返回");
                                     AutoUtil.recordAndLog(record,Constants.CHAT_LISTENING);
@@ -164,7 +166,9 @@ public class ChatService extends AccessibilityService {
         if(tryCount==10) return;
         AccessibilityNodeInfo editText = AutoUtil.findNodeInfosById(getRootInActiveWindow(),"com.tencent.mm:id/a49");
         if(editText!=null){
-            editText.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,AutoUtil.createBuddleText("测试内容"+System.currentTimeMillis()+" "+countSendNum));
+            String msg = "测试内容"+System.currentTimeMillis()+" 1";
+            editText.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,AutoUtil.createBuddleText(sendMsg));
+            //editText.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,AutoUtil.createBuddleText("测试内容"+System.currentTimeMillis()+" 1"));
             AutoUtil.recordAndLog(record,Constants.CHAT_ACTION_05);
         }else if(tryCount!=0) {
             LogUtil.d("autoChat","输入框 is null "+tryCount);
@@ -276,6 +280,14 @@ public class ChatService extends AccessibilityService {
                 isLogin=false;
             }
         }
+    }
+    private void getMsgs(String str){
+        if(str==null||"".equals(str.trim())){
+            return;
+        }
+        String[] strs = str.split("##");
+        List<String> strList = new ArrayList<String>();
+        ofrd
     }
 
     public List<String[]> getAccount(){

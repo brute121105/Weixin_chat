@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String[] m={"1","2","3","4","5","6","7","8","9","10"};
     private TextView view ;
     private EditText intevalTime;
-    private EditText intevalLoginTime;
     private Spinner spinner;
     private ArrayAdapter<String> adapter;
 
@@ -94,13 +93,6 @@ public class MainActivity extends AppCompatActivity {
         }
         intevalTime.setText(defaultintevalTime);
 
-        intevalLoginTime = (EditText)findViewById(R.id.interval_login_time);
-        String defaulIntevalLoginTime = sharedPreferences.getString("intevalLoginTime","");
-        if(defaulIntevalLoginTime==null||defaulIntevalLoginTime.equals("")){
-            defaulIntevalLoginTime = "3";
-        }
-        intevalLoginTime.setText(defaulIntevalLoginTime);
-
     }
     private View.OnClickListener tbnListen = new View.OnClickListener() {
         @Override
@@ -109,20 +101,19 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("--->dd");
             Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
             startActivity(intent);
-            Toast.makeText(MainActivity.this, "放开辅助权限", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "去打开权限", Toast.LENGTH_LONG).show();
         }
     };
     private void saveParams(){
         SharedPreferences.Editor editor= sharedPreferences.edit();
         editor.putString("intervalTime",intevalTime.getText()+"");
-        editor.putString("intevalLoginTime",intevalLoginTime.getText()+"");
         editor.commit();
     }
 
     //使用数组形式操作
     class SpinnerSelectedListener implements AdapterView.OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
-            view.setText("发送个数："+m[arg2]);
+            view.setText("发送好友（群）个数："+m[arg2]);
             SharedPreferences.Editor editor= sharedPreferences.edit();
             editor.putString("qNum",m[arg2]);
             editor.commit();
