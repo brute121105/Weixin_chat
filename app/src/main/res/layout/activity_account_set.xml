@@ -4,8 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@android:style/Theme.Black.NoTitleBar"
     android:orientation="vertical"
     tools:context="hyj.weinxin_chat.activity.AccountSetActivity">
+
+   <Button
+        android:id="@+id/account_back"
+        android:text="退出"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/account_save"
+        android:text="保存并返回上级"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/send_msg"
@@ -13,16 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:hint="输入聊天内容..." />
-    <Button
-        android:id="@+id/account_save"
-        android:text="保存并返回上级"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-   <Button
-        android:id="@+id/account_back"
-        android:text="退出"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:hint="输入聊天内容,每句以#号开头..." />
     </LinearLayout>
 

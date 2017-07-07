@@ -70,7 +70,6 @@ public class ChatService extends AccessibilityService {
     }
     static List<String> nickNames = new ArrayList<String>();
     static int nickNameIndes=0;
-    static int countSendNum=0;
     static boolean isLogin=false;
     static int lastLoginMinute = -5;
     class AutoChatThread implements Runnable{
@@ -100,7 +99,7 @@ public class ChatService extends AccessibilityService {
                                 nickText = nickNode.getText().toString();
                                 System.out.println("nick-->" + nickText);
                             }
-                            if (nickNames.get(nickNameIndes).equals(nickText)) {
+                            if (nickNames.get(nickNameIndes).equals(nickText)&&!"腾讯新闻".equals(nickText)) {
                                 AutoUtil.performClick(nickNode, record, "点击昵称:"+nickText, 1000);
 
                                 //6、填充第3步已获取消息到输入框
@@ -126,9 +125,9 @@ public class ChatService extends AccessibilityService {
                                     //AutoUtil.performBack(ChatService.this,record,"全局返回");
                                     AutoUtil.recordAndLog(record,Constants.CHAT_LISTENING);
                                 }
+                                //if(nickNameIndes==nickNames.size()-1){
                                 if(nickNameIndes==nickNames.size()-1||nickNameIndes==qNum-1){
                                     nickNameIndes=0;
-                                    countSendNum = countSendNum+1;
                                 }else {
                                     nickNameIndes = nickNameIndes+1;
                                 }
@@ -262,7 +261,6 @@ public class ChatService extends AccessibilityService {
                 AutoUtil.recordAndLog(loginRecord,Constants.LOGINI_LISTENING);
                 nickNames = new ArrayList<String>();
                 nickNameIndes=0;
-                countSendNum=0;
                 isLogin=false;
             }
         }
