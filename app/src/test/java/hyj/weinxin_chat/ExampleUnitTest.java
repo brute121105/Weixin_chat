@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 import static hyj.weinxin_chat.GlobalApplication.getContext;
 import static org.junit.Assert.*;
@@ -20,10 +21,6 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("mm");
-        String dateTime = sdf.format(new Date());
-        int a = Integer.parseInt("01");
-        System.out.println(a);
-        System.out.println(dateTime);
+        System.out.println((int)(Math.random()*1));
     }
 }

@@ -10,6 +10,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -184,6 +185,29 @@ public class AutoUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static List<String> getSomeMsgs(){
+        List<String> list = new ArrayList<String>();
+        list.add("你好.");
+        list.add("在。。");
+        list.add("可以的。。");
+        list.add("我不介意。。");
+        list.add("没有讲过。。");
+        list.add("是不是");
+        list.add("应该不是");
+        list.add("什么时候");
+        list.add("大概今晚9点左右");
+        list.add("我会按时");
+        list.add("嗯，好");
+        list.add("今晚去不去");
+        list.add("同学过来");
+        list.add("好久没去");
+        list.add("是这个时候");
+        list.add("早点回来");
+        list.add("出发了");
+        list.add("可以没有");
+        return list;
     }
 
 }

@@ -80,7 +80,7 @@ public class ChatService extends AccessibilityService {
                 LogUtil.d("autoChat","等待自动登录完成...");
                 return;
             }
-            if(accounts.size()>0&&minute%intevalLoginTime==0&&(minute-lastLoginMinute)>1){
+            if(accounts.size()>0&&minute%intevalLoginTime==0&&Math.abs(minute-lastLoginMinute)>1){
                 synchronized (this){
                     LogUtil.d("autoLogin","满足自动登录");;
                     AccessibilityNodeInfo loginRoot = getRootInActiveWindow();
@@ -164,7 +164,9 @@ public class ChatService extends AccessibilityService {
         if(tryCount==10) return;
         AccessibilityNodeInfo editText = AutoUtil.findNodeInfosById(getRootInActiveWindow(),"com.tencent.mm:id/a49");
         if(editText!=null){
-            editText.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,AutoUtil.createBuddleText("测试内容"+System.currentTimeMillis()+" "+countSendNum));
+            List<String> msgs = AutoUtil.getSomeMsgs();
+            int randomNum = (int)(Math.random()*msgs.size());
+            editText.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,AutoUtil.createBuddleText(msgs.get(randomNum)+System.currentTimeMillis()+" "+countSendNum));
             AutoUtil.recordAndLog(record,Constants.CHAT_ACTION_05);
         }else if(tryCount!=0) {
             LogUtil.d("autoChat","输入框 is null "+tryCount);
