@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.MotionEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -41,6 +42,22 @@ public class ChatService extends AccessibilityService {
         }else {
             LogUtil.d("autoLogin","auto login root is null");
         }
+        AccessibilityNodeInfo node = AutoUtil.findNodeInfosByText(root,"按住 说话");
+        if(node!=null){
+            System.out.println("node is not null--->");
+            //node.performAction(MotionEvent.ACTION_DOWN);
+            this.performGlobalAction(AccessibilityService.GESTURE_SWIPE_DOWN);
+            AutoUtil.sleep(3000);
+            this.performGlobalAction(AccessibilityService.GESTURE_SWIPE_UP);
+            ;
+        }else {
+            System.out.println("node is null--->"+node);
+        }
+       /* List<AccessibilityNodeInfo> listView = root.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/bny");
+        if (listView != null && listView.size() > 0) {
+            listView.get(0).performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
+            AutoUtil.sleep(3000);
+        }*/
     }
     static int qNum;
     static int intervalTime;
@@ -59,7 +76,7 @@ public class ChatService extends AccessibilityService {
         intevalLoginTime = Integer.parseInt("".equals(strIntevalLoginTime)?"0":strIntevalLoginTime);
         LogUtil.d("chatService","发送个数:"+qNum+" 发送间隔:"+strIntervalTime+" 自动登录间隔:"+intevalLoginTime+" 配置账号个数:"+accounts.size());
         ScheduledThreadPoolExecutor stpe = new ScheduledThreadPoolExecutor(5);
-        stpe.scheduleWithFixedDelay(new AutoChatThread(),3,intervalTime, TimeUnit.SECONDS);
+        //stpe.scheduleWithFixedDelay(new AutoChatThread(),3,intervalTime, TimeUnit.SECONDS);
     }
     static List<String> nickNames = new ArrayList<String>();
     static int nickNameIndes=0;
@@ -406,4 +423,5 @@ public class ChatService extends AccessibilityService {
         }
         System.out.println("-----------end---------");
     }
+
 }
